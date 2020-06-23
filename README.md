@@ -50,7 +50,7 @@ This [homebridge](https://github.com/nfarina/homebridge) plugin exposes a web-ba
 | `switchOffDelay` | Time (in seconds) until your garage will automatically close without animation (if enabled) | `2` |
 | `polling` | Whether the state should be polled at intervals | `false` |
 | `pollInterval` | Time (in seconds) between device polls (if `polling` is enabled) | `120` |
-| `statusURL` | URL to retrieve state on poll (should return `0` or `1`) | N/A |
+| `statusURL` | URL to retrieve state on poll (should return `0` for open, `1` for closed, `2` for opening, `3` for closing, and `4` for stopped midway) | N/A |
 
 ### Additional options
 | Key | Description | Default |
