@@ -1,4 +1,4 @@
-var Service, Characteristic
+var Service, Characteristic, oldresponsebody
 const packageJson = require('./package.json')
 const request = require('request')
 
@@ -69,24 +69,28 @@ GarageDoorOpener.prototype = {
       callback(error, response, body)
     })
   },
+  
 
-  _getStatus: function (callback) {
-    var url = this.statusURL
-    this.log.debug('Getting status: %s', url)
+_getStatus: function (callback) {
+    var url = this.statusURL;
+    this.log.debug('Getting status: %s', url);
 
     this._httpRequest(url, '', 'GET', function (error, response, responseBody) {
-      if (error) {
-        this.log.warn('Error getting status: %s', error.message)
-        this.service.getCharacteristic(Characteristic.CurrentDoorState).updateValue(new Error('Polling failed'))
-        callback(error)
-      } else {
-        this.service.getCharacteristic(Characteristic.CurrentDoorState).updateValue(responseBody)
-        this.service.getCharacteristic(Characteristic.TargetDoorState).updateValue(responseBody)
-        this.log('Updated state to: %s', responseBody)
-        callback()
-      }
-    }.bind(this))
-  },
+        if (error) {
+            this.log.warn('Error getting status: %s', error.message);
+            this.service.getCharacteristic(Characteristic.CurrentDoorState).updateValue(new Error('Polling failed'));
+            callback(error);
+        } else {
+            this.service.getCharacteristic(Characteristic.CurrentDoorState).updateValue(responseBody);
+            this.service.getCharacteristic(Characteristic.TargetDoorState).updateValue(responseBody);
+            if (oldresponsebody !== responseBody) {
+                this.log('Updated state to: %s', responseBody);
+                oldresponsebody = responseBody;
+                callback();
+            }
+        }
+    }.bind(this));
+},
 
   setTargetDoorState: function (value, callback) {
     var url
